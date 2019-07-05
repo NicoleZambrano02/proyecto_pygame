@@ -23,4 +23,4 @@ while True:
 		screen.blit(mouse_cursor,(x,y))
 		pygame.display.update()
 #hola pipol
-		
+# que mas pex
