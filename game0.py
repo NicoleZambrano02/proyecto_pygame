@@ -22,3 +22,5 @@ while True:
 		y-=mouse_cursor.get_height()/2
 		screen.blit(mouse_cursor,(x,y))
 		pygame.display.update()
+#hola pipol
+		
