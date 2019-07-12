@@ -17,4 +17,8 @@ para usarlos en un .py principal.
 Se usará el siguiente link como fuente para realizar el proyecto: http://progra.usm.cl/apunte/tareas/2013-1/tarea-2.html
 Los objetos "sprites" serán usados para el este juego como se detallará a continuación.
 
+Se van a utilizar distintos sprites de tanques que se han encontrado en Internet, los que son baicamente imagenes en pantalla que 
+va a utilizar en este videojuego, estos sprites vendrian a ser los objetes esenciales en este videojuego.
+
+
 
