@@ -4,10 +4,10 @@ block = "bloques.png"
 import pygame
 from pygame.locals import *
 from random import randint
-
 pygame.init()
 size=768, 768
 screen=pygame.display.set_mode(size)
+fuente = pygame.font.SysFont("tahoma", 30)
 
 #titulo
 pygame.display.set_caption("BATALLA DE TANQUES")
@@ -28,6 +28,12 @@ posY = randint(10,400)
 x = randint(10,400)
 y = randint(10,400)
 velocidad = 10
+
+#tiempo en pantalla de juego
+def tiempo():
+	time = int(pygame.time.get_ticks()/1000)
+	mensaje = fuente.render('Tiempo transcurrido: '+str(time),True,(255,255,255))
+	screen.blit(mensaje,(300,10))
 
 run=True
 while run:
@@ -54,8 +60,10 @@ while run:
 					print("TECLA IZQUIERDA LIBERADA")
 			elif event.key == K_RIGHT:
 					print("TECLA DERECHA LIBERADA")
-			
-		pygame.display.update()
+	
+	tiempo()
+	pygame.display.update()	
+
 
 
 
