@@ -2,6 +2,7 @@ fondo = "fondo.png"
 tank =  "tanque.png"
 block = "bloques.png"
 import pygame
+from pygame.locals import *
 from random import randint
 
 pygame.init()
@@ -26,32 +27,35 @@ posY = randint(10,400)
 
 x = randint(10,400)
 y = randint(10,400)
+velocidad = 10
 
 run=True
 while run:
-        
+	#cargar imagenes 
+	screen.blit(background,(0,0))
+	screen.blit(tanque,(x,y))
+	screen.blit(bloque,(posX,posY))
 	pygame.time.delay(2)
 	for event in pygame.event.get():
 		if event.type==pygame.QUIT:
 			pygame.quit()
 			exit()
+		elif event.type == pygame.KEYDOWN:
+			if event.key == K_LEFT:
+				x-=velocidad
+			elif event.key == K_RIGHT:
+				x+=velocidad
+			elif event.key == K_UP:
+				y-=velocidad
+			elif event.key == K_DOWN:
+				y+=velocidad
+		elif event.type == pygame.KEYUP:
+			if event.key == K_LEFT:
+					print("TECLA IZQUIERDA LIBERADA")
+			elif event.key == K_RIGHT:
+					print("TECLA DERECHA LIBERADA")
 			
-                #cargar imagenes 
-		screen.blit(background,(0,0))
-		screen.blit(tanque,(x,y))
-		screen.blit(bloque,(posX,posY))
 		pygame.display.update()
-
-#supuesta funcion para mover imagenes
-	#for x in range(100):
-        #screen.blit(background, position, position)
-        #position = position.move(2, 0)
-        #screen.blit(tanque, position)
-        #pygame.display.update()
-
-pygame.time.delay(100) 
-
-
 
 
 
