@@ -28,7 +28,7 @@ class Boton(pygame.sprite.Sprite):
         self.imagenNormal = imagen1
         self.imagenSeleccion = imagen2
         self.imagenActual= self.imagenNormal
-        #self.sonido = pygame.mixer.Sound("audio/laser.ogg")
+        self.sonido = pygame.mixer.Sound("grabacion.ogg")
         self.rect = self.imagenActual.get_rect()
         self.rect.left,self.rect.top = (x,y)
 
@@ -36,7 +36,8 @@ class Boton(pygame.sprite.Sprite):
         if cursor.colliderect(self.rect):#si el cursor choca con nuestro rectangulo
             self.imagenActual = self.imagenSeleccion
             if self.continuar:
-                #self.sonido.play()
+                self.sonido.play()
+                
                 self.continuar = False
      
         else:
@@ -50,6 +51,11 @@ img1=pygame.image.load("boton1.png")
 img2=pygame.image.load("boton2.png")
 boton1=Boton(img1,img2)
 cursor1=Cursor()
+pygame.mixer.music.set_volume(0.9) #Configuracion del Volumen
+pygame.mixer.music.load("fondo.mp3") #Carga de mp3 sonido de fondo
+pygame.mixer.music.play(-1, 0.0) #Bucle infinito de reproduccion del sonido
+
+
 while True:
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
@@ -61,4 +67,5 @@ while True:
     pygame.display.update()
 
 pygame.quit()
+
 
