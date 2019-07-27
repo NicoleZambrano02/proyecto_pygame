@@ -4,6 +4,7 @@ block = "bloques.png"
 enemy = "tanque2.png"
 bala = "bala.png"
 boom = "explosion.png"
+final ="gameover.png"
 import pygame
 from pygame.locals import*
 import random    
@@ -13,6 +14,8 @@ pygame.init()
 size=768, 700
 screen=pygame.display.set_mode(size)
 fuente = pygame.font.SysFont("tahoma", 30)
+fuente2 = pygame.font.SysFont("tahoma", 30)
+fuente3 = pygame.font.SysFont("tahoma", 30)
 
 #CANTIDAD DE VIDAS
 vida =3
@@ -24,7 +27,7 @@ puntaje=0
 posX = randint(10,400)
 posY = randint(10,400)
 
-x = randint(10,400)
+x = randint(1,10)
 y = randint(10,400)
 
 x2 = randint(10,400)
@@ -47,22 +50,24 @@ rectangulo_tanque.top = 650
 
 
 enemigo = pygame.image.load(enemy).convert_alpha()
-rectangulo_enemigo = { }          # Nuevo en 0.07
-enemigosVisibles = { }             # Nuevo en 0.07
-velocidadesX = { }                  # Nuevo en 0.07
-velocidadesY = { }                  # Nuevo en 0.07
+rectangulo_enemigo = { }          
+enemigosVisibles = { }             
+velocidadesX = { }                  
+velocidadesY = { }                  
 
-for i in range(0,cantidadEnemigos+1):                      # Nuevo en 0.07
-    rectangulo_enemigo[i] = enemigo.get_rect()     # Nuevo en 0.07
-    rectangulo_enemigo[i].left = random.randrange(50,650) # Nuevo en 0.07
-    rectangulo_enemigo[i].top = random.randrange(10,301)  # Nuevo en 0.07
-    enemigosVisibles[i] = True                             # Nuevo en 0.07
-    velocidadesX[i] = 1                                     # Nuevo en 0.07
+for i in range(0,cantidadEnemigos+1):                      
+    rectangulo_enemigo[i] = enemigo.get_rect()     
+    rectangulo_enemigo[i].left = random.randrange(50,650) 
+    rectangulo_enemigo[i].top = random.randrange(10,301)  
+    enemigosVisibles[i] = True                             
+    velocidadesX[i] = 1                                     
     velocidadesY[i] = 1   
 
 disparo = pygame.image.load(bala).convert_alpha()
 rectanguloDisparo = disparo.get_rect()
+rectanguloDisparo2 = disparo.get_rect()
 disparoActivo = False
+disparoActivo2 = False
 jugador = True
 
 explosion = pygame.image.load(boom).convert_alpha()
@@ -70,12 +75,12 @@ rectangulo_explosion = explosion.get_rect()
 explosionActiva = False
 
 #MUSICA Y SONIDOS
-music_fondo =pygame.mixer.Sound("musica_fondo.wav")
+music_fondo =pygame.mixer.Sound("musica_fondo.wav")# REPRODUCIR MUSICA DE FONDO
 music_fondo.play(1)
 
 music_shoot = pygame.mixer.Sound("disparo.wav")
 music_explode = pygame.mixer.Sound("explosion_tanque.wav")
-
+music_explode.stop()# DETENER SONIDO EXPLOSION
 
 pygame.display.update()
 
@@ -85,24 +90,39 @@ velocidad=10
 angulo_rotacion=90
 
 ancho = 768
-alto = 700
+alto = 450
 velocidadX = 1
 velocidadY = 1
+
+#ANGULO DE ROTACION
+#angulo = pygame.transform.rotate(tanque, 90)
 
 #RELOJ
 def tiempo():
 	time = int(pygame.time.get_ticks()/1000)
 	mensaje = fuente.render('Tiempo transcurrido: '+str(time),True,(255,255,255))
-	screen.blit(mensaje,(300,10))
+	screen.blit(mensaje,(450,10))
 
-def vida():
-	vida = 3
-	mensaje = fuente.render('VIDAS: '+str(vida),True,(255,255,255))
-
+#DISMINUCION DE VIDA POR CONTACTO CON ENEMIGOS
+def vidas():
+    global vida 
+    vida -= 1
+    #FIN DEL JUEGO 
+    if vida <= 0:
+        end = pygame.image.load("gameover.png").convert_alpha()
+        screen.blit(end, (300, 300))
+    
+def disp():
+    global music_shoot
+    music_shoot.play()
+    
+def puntajes():
+    global puntaje
+    puntaje += 10
 
 run=True
 while run:
-
+    
     for event in pygame.event.get():
         if event.type==pygame.QUIT:
             pygame.quit()
@@ -114,9 +134,20 @@ while run:
         rectangulo_tanque.left -= 2
     if keys[K_RIGHT]:
         rectangulo_tanque.left += 2
+    if keys[K_UP]:
+        rectangulo_tanque.top -= 2
+    if keys[K_DOWN]:
+        rectangulo_tanque.top += 2
 
+    #ROTACION
+    if keys[K_LSHIFT] and not disparoActivo2:
+        disparoActivo2 = True
+        rectanguloDisparo2.left = rectangulo_enemigo[2].left + 18
+        rectanguloDisparo2.top = rectangulo_enemigo[2].top + 25
+        
     #REALIZAR DISPARO
     if keys[K_SPACE] and not disparoActivo:
+        disp()
         disparoActivo = True
         rectanguloDisparo.left = rectangulo_tanque.left + 18
         rectanguloDisparo.top = rectangulo_tanque.top - 25
@@ -132,25 +163,48 @@ while run:
  	
  	#AVANCE DE DISPARO
     if disparoActivo:
-        music_explode.stop()
-        music_shoot.play(1)
+        music_explode.stop()# DETENER SONIDO DE EXPLOSION
+        #music_shoot.play() # REPRODUCIR SONIDO DE DISPARO
         rectanguloDisparo.top -= 1
         if rectanguloDisparo.top <= 0:
             disparoActivo = False
 
+    if puntaje == 10:
+        music_explode.stop()
+        disparoActivo2 = True
+        rectanguloDisparo2.left = rectangulo_enemigo[x].left + 18
+        rectanguloDisparo2.top = rectangulo_enemigo[x].top - 25
+
+    if disparoActivo2:
+        # DETENER SONIDO DE EXPLOSION
+        #music_shoot.play() #REPRODUCIR SONIDO DE DISPARO
+        rectanguloDisparo2.top -= 1
+        if rectanguloDisparo2.top <= 0:
+            disparoActivo2 = False
+
 	#COMPROBAR CONTACTO CON LA BALA
     for i in range(0,cantidadEnemigos+1):              
         if enemigosVisibles[i]:                        
-            if rectangulo_tanque.colliderect( rectangulo_enemigo[i] ):
+            if rectangulo_enemigo[i].colliderect(rectangulo_tanque):
                 run = True
- 
+
+            if disparoActivo2:
+                if rectanguloDisparo2.colliderect( rectangulo_tanque) :
+                    
+                     #DETENER SONIDO DE DISPARO
+                    music_explode.play() #REPRODUCIR SONIDO DE EXPLOSION
+                    screen.blit(explosion, rectangulo_tanque) #IMAGEN DE EXPLOSION
+                    jugador = False
+                    disparoActivo2 = False
+                    vidas()
+
             if disparoActivo:
                 if rectanguloDisparo.colliderect( rectangulo_enemigo[i]) :
-                    music_shoot.stop()
-                    music_explode.play(1)
-                    screen.blit(explosion, rectangulo_enemigo[i])
+                    music_explode.play() #REPRODUCIR SONIDO DE EXPLOSION
+                    screen.blit(explosion, rectangulo_enemigo[i]) #IMAGEN DE EXPLOSION
                     enemigosVisibles[i] = False
                     disparoActivo = False
+                    puntajes()
                     
  
     cantidadEnemigosVisibles = 0                         
@@ -158,12 +212,11 @@ while run:
         if enemigosVisibles[i]:                          
             cantidadEnemigosVisibles = cantidadEnemigosVisibles + 1
 
-    if puntaje == 30:
-        screen.blit(enemigo, rectangulo_enemigo)
+    if puntaje == 400:               
+        rectangulo=enemigo.get_rect()
+        screen.blit(rectangulo, (500,500)) #IMAGEN ENEMIGO
 
-    #FIN DEL JUEGO 
-    if vida == 0:
-        screen.blit(pygame.image.load("gameover.png"), (300, 300))
+    
                            
  
     # MOSTRAR ELEMENTOS EN LA PANTALLA
@@ -177,10 +230,15 @@ while run:
     if disparoActivo:
         screen.blit(disparo, rectanguloDisparo)# IMAGEN DISPARO
     
-    screen.blit(tanque, rectangulo_tanque)	
-    screen.blit(bloque,(posX,posY))
+    screen.blit(tanque, rectangulo_tanque) # IMAGEN TANQUE
+
+    texto = fuente2.render("Vida: " + str(vida), True, (255, 124, 0))
+    screen.blit(texto,(10,10))
+    texto2 = fuente3.render("Puntaje: " + str(puntaje), True, (255, 124, 0))
+    screen.blit(texto2,(250,10))
     tiempo()  
-    vida()
+    
+    
     pygame.display.flip()
 
 
