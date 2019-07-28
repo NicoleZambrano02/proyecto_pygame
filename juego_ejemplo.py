@@ -20,6 +20,14 @@ fuente2 = pygame.font.SysFont("tahoma", 30)
 fuente3 = pygame.font.SysFont("tahoma", 30)
 rangodisparo=10
 
+#uso del joystick
+joysticks=[]
+for i in range(0,pygame.joystick.get_count()):
+    joysticks.append(pygame.joystick.Joystick(i))
+    joysticks[-1].init()
+    print("detected joystick: ",joysticks[-1].get_name())
+
+    
 #CANTIDAD DE VIDAS
 vida =3
 
@@ -147,18 +155,32 @@ while run:
         
         #MOVIMIENTO DEL JUGADOR        
         keys = pygame.key.get_pressed()
-        if rectangulo_tanque.left !=0:
-            if keys[K_LEFT]:
-                rectangulo_tanque.left -= 2
-        if rectangulo_tanque.left !=720:
-            if keys[K_RIGHT]:
-                rectangulo_tanque.left += 2
-        if rectangulo_tanque.left !=450:
-            if keys[K_UP]:
-                rectangulo_tanque.top -= 2
-        if rectangulo_tanque.left !=700:
-            if keys[K_DOWN]:
-                rectangulo_tanque.top += 2
+        if event.type==pygame.JOYBUTTONDOWN   :
+            if rectangulo_tanque.left !=0:
+                if event.button==2:
+                    rectangulo_tanque.left -= 2
+            if rectangulo_tanque.left !=720:
+                if event.button==1:
+                    rectangulo_tanque.left += 2
+            if rectangulo_tanque.left !=450:
+                if event.button==3:
+                    rectangulo_tanque.top -= 2
+            if rectangulo_tanque.left !=700:
+                if event.button==0:
+                    rectangulo_tanque.top += 2
+        else:
+            if rectangulo_tanque.left !=0:
+                if keys[K_LEFT]:
+                    rectangulo_tanque.left -= 2
+            if rectangulo_tanque.left !=720:
+                if keys[K_RIGHT]:
+                    rectangulo_tanque.left += 2
+            if rectangulo_tanque.left !=450:
+                if keys[K_UP]:
+                    rectangulo_tanque.top -= 2
+            if rectangulo_tanque.left !=700:
+                if keys[K_DOWN]:
+                    rectangulo_tanque.top += 2
 
         #Disparo enemigo
         if (randint(0,100)<rangodisparo) and not disparoActivo2:
@@ -168,11 +190,19 @@ while run:
             rectanguloDisparo2.top = rectangulo_enemigo[randint(0,cantidadEnemigos)].top + 25
             
         #REALIZAR Tanque
-        if keys[K_SPACE] and not disparoActivo:
-            disp()
-            disparoActivo = True
-            rectanguloDisparo.left = rectangulo_tanque.left + 18
-            rectanguloDisparo.top = rectangulo_tanque.top - 25
+        if event.type==pygame.JOYBUTTONDOWN:
+            if event.button==4 and not disparoActivo:
+                disp()
+                disparoActivo = True
+                rectanguloDisparo.left = rectangulo_tanque.left + 18
+                rectanguloDisparo.top = rectangulo_tanque.top - 25
+            
+        else:
+             if keys[K_SPACE] and not disparoActivo:
+                disp()
+                disparoActivo = True
+                rectanguloDisparo.left = rectangulo_tanque.left + 18
+                rectanguloDisparo.top = rectangulo_tanque.top - 25
 
         #ACTUALIZAR ESTADO
         for i in range(0,cantidadEnemigos+1):               
